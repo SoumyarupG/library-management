@@ -11,7 +11,8 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/books")
-@CrossOrigin(origins = "http://localhost:3000") // For React frontend
+@CrossOrigin(origins = { "http://localhost:3000", "https://library-management-7bsg.onrender.com" }) // For React
+                                                                                                    // frontend
 public class BookController {
 
     @GetMapping("/")

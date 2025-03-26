@@ -15,15 +15,14 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/books")
-@CrossOrigin(origins = { "http://localhost:3000", "https://library-management-7bsg.onrender.com" }) // For React
-                                                                                                    // frontend
+@CrossOrigin(origins = { "http://localhost:3000", "https://library-management-7bsg.onrender.com" })
 public class BookController {
 
     @Autowired
     private BookService bookService;
 
     // Home Route with a structured JSON response
-    @GetMapping("/")
+    @GetMapping("/home")
     public ResponseEntity<Map<String, String>> home() {
         Map<String, String> response = new HashMap<>();
         response.put("message", "Welcome to the Library API!");
@@ -44,26 +43,44 @@ public class BookController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // Search books by title
+    // Search books by title or ID
     @GetMapping("/search")
-    public List<Book> searchBooks(@RequestParam String title) {
-        return bookService.searchBooksByTitle(title);
+    public ResponseEntity<List<Book>> searchBooks(@RequestParam(required = false) String title,
+            @RequestParam(required = false) Long id) {
+        if (title != null) {
+            return ResponseEntity.ok(bookService.searchBooksByTitle(title));
+        } else if (id != null) {
+            Optional<Book> book = bookService.getBookById(id);
+            if (book.isPresent()) {
+                return ResponseEntity.ok(List.of(book.get()));
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            }
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
     }
 
     // Add a new book (with input validation and returning 201 Created status)
     @PostMapping
     public ResponseEntity<Book> addBook(@Valid @RequestBody Book book) {
-        Book savedBook = bookService.addBook(book);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedBook);
+        if (book.getId() != null && book.getId() > 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // ID should not be provided; it will be
+                                                                             // auto-generated
+        } else {
+            Book savedBook = bookService.addBook(book);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedBook);
+        }
     }
 
     // Update book by ID
     @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book bookDetails) {
+    public ResponseEntity<?> updateBook(@PathVariable Long id, @RequestBody Book bookDetails) {
         try {
-            return ResponseEntity.ok(bookService.updateBook(id, bookDetails));
+            Book updatedBook = bookService.updateBook(id, bookDetails);
+            return ResponseEntity.ok(updatedBook);
         } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book not found.");
         }
     }
 

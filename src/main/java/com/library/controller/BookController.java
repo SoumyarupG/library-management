@@ -14,6 +14,11 @@ import java.util.Optional;
 @CrossOrigin(origins = "http://localhost:3000") // For React frontend
 public class BookController {
 
+    @GetMapping("/")
+    public String home() {
+        return "Welcome to the Library API!";
+    }
+
     @Autowired
     private BookService bookService;
 

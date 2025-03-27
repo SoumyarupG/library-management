@@ -13,7 +13,7 @@ const BookList = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    axios.get('http://localhost:8080/books')
+    axios.get('http://localhost:3000/books')
       .then((response) => {
         setBooks(response.data);
       })
@@ -24,7 +24,7 @@ const BookList = () => {
 
   const addBook = (e) => {
     e.preventDefault();
-    axios.post('http://localhost:8080/books', newBook)
+    axios.post('http://localhost:3000/books', newBook)
       .then((response) => {
         setBooks([...books, response.data]);
         setNewBook({ title: '', author: '', genre: '', availabilityStatus: 'Available' });
@@ -35,7 +35,7 @@ const BookList = () => {
   };
 
   const deleteBook = (id) => {
-    axios.delete(`http://localhost:8080/books/${id}`)
+    axios.delete(`http://localhost:3000/books/${id}`)
       .then(() => {
         setBooks(books.filter((book) => book.id !== id));
       })
@@ -46,7 +46,7 @@ const BookList = () => {
 
   const searchBooks = (e) => {
     e.preventDefault();
-    axios.get(`http://localhost:8080/books/search?title=${searchQuery}`)
+    axios.get(`http://localhost:3000/books/search?title=${searchQuery}`)
       .then((response) => {
         setBooks(response.data);
       })

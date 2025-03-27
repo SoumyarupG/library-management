@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/book")
-@CrossOrigin(origins = { "http://localhost:10000", "https://library-management-7bsg.onrender.com" })
+@CrossOrigin(origins = { "http://localhost:3000", "https://library-management-7bsg.onrender.com" })
 public class BookController {
 
     @Autowired

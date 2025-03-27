@@ -12,7 +12,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(@NonNull CorsRegistry registry) {
         // Replace this with your React app's URL
         registry.addMapping("/**")
-                .allowedOrigins("https://your-react-app-url.com") // Replace with your React frontend URL
+                .allowedOrigins("https://library-management-7bsg.onrender.com") // React frontend URL
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowedHeaders("*")
                 .allowCredentials(true);

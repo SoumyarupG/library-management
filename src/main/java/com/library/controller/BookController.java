@@ -14,15 +14,15 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/books")
-@CrossOrigin(origins = { "http://localhost:3000", "https://library-management-7bsg.onrender.com" })
+@RequestMapping("/book")
+@CrossOrigin(origins = { "http://localhost:10000", "https://library-management-7bsg.onrender.com" })
 public class BookController {
 
     @Autowired
     private BookService bookService;
 
     // Home Route with a structured JSON response
-    @GetMapping("/home")
+    @GetMapping("/")
     public ResponseEntity<Map<String, String>> home() {
         Map<String, String> response = new HashMap<>();
         response.put("message", "Welcome to the Library API!");
@@ -64,12 +64,15 @@ public class BookController {
     // Add a new book (with input validation and returning 201 Created status)
     @PostMapping
     public ResponseEntity<Book> addBook(@Valid @RequestBody Book book) {
-        if (book.getId() != null && book.getId() > 0) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // ID should not be provided; it will be
-                                                                             // auto-generated
-        } else {
+        if (book.getId() == null || book.getId() <= 0) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(null); // ID is required and must be positive
+        }
+        try {
             Book savedBook = bookService.addBook(book);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedBook);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
         }
     }
 

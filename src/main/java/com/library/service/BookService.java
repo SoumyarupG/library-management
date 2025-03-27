@@ -33,8 +33,8 @@ public class BookService {
     // Add a new book with validation
     @Transactional
     public Book addBook(Book book) {
-        if (book.getId() != null) {
-            throw new IllegalArgumentException("Book ID should not be provided; it will be auto-generated.");
+        if (bookRepository.existsById(book.getId())) {
+            throw new RuntimeException("Book with this ID already exists!");
         }
         return bookRepository.save(book);
     }
